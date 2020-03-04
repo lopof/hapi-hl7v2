@@ -27,11 +27,15 @@
 package ca.uhn.hl7v2.examples;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Map;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v26.message.ORU_R01;
+import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 
@@ -54,8 +58,19 @@ public class ExampleReceiverApplication implements ReceivingApplication<Message>
      */
 	public Message processMessage(Message theMessage, Map<String, Object> theMetadata) throws ReceivingApplicationException, HL7Exception {
 
-        String encodedMessage = new DefaultHapiContext().getPipeParser().encode(theMessage);
-        System.out.println("Received message:\n" + encodedMessage + "\n\n");
+        HapiContext context = new DefaultHapiContext();
+        Parser parser = context.getPipeParser();
+        ORU_R01 msg;
+        //String encodedMessage = new DefaultHapiContext().getPipeParser().encode(theMessage);
+        String encodedMessage = theMessage.toString();
+        String ar[] = encodedMessage.split("\r");
+
+        //msg = (ORU_R01) parser.parse(encodedMessage);
+
+        //String encodedMessage = new DefaultHapiContext().getPipeParser().encode(theMessage);
+        for(int i = 0;i<ar.length;i++) {
+            System.out.print("Received message:\n" + encodedMessage.split("\r")[i]);
+        }
         // Now generate a simple acknowledgment message and return it
         try {
         	return theMessage.generateACK();
